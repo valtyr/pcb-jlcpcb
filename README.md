@@ -1,6 +1,6 @@
 # pcb-jlcpcb
 
-A [pcb](https://github.com/nickmass/pcb) subcommand for working with JLCPCB's parts library. Search for components, generate `.zen` files with correct footprints and pinouts, and export BOMs for JLCPCB assembly.
+A [pcb](https://github.com/diodeinc/pcb) subcommand for working with JLCPCB's parts library. Search for components, generate `.zen` files with correct footprints and pinouts, and export BOMs for JLCPCB assembly.
 
 ## Installation
 
