@@ -1,0 +1,51 @@
+"""
+{{ mpn }} - JLCPCB {% if basic %}Basic{% else %}Extended{% endif %} Part {{ lcsc }}
+{% if description %}
+{{ description }}
+{% endif %}
+Auto-generated using `pcb jlcpcb generate`.
+"""
+
+mpn = config("mpn", str, optional=True, default="{{ mpn }}")
+manufacturer = config("manufacturer", str, optional=True, default="{{ manufacturer }}")
+
+Pins = struct(
+{%- for field in struct_fields %}
+    {{ field.sanitized }} = io("{{ field.sanitized }}", Net){{ "," if not loop.last else "" }}
+{%- endfor %}
+)
+
+Component(
+    name = "{{ name }}",
+    mpn = mpn,
+    manufacturer = manufacturer,
+{%- if description %}
+    description = "{{ description }}",
+{%- endif %}
+{%- if datasheet %}
+    datasheet = "{{ datasheet }}",
+{%- endif %}
+{%- if symbol_file %}
+    symbol = Symbol(library="{{ symbol_file }}"),
+{%- endif %}
+{%- if footprint_file %}
+    footprint = File("{{ footprint_file }}"),
+{%- endif %}
+    pins = {
+{%- for field in struct_fields %}
+        "{{ field.sanitized }}": Pins.{{ field.sanitized }}{{ "," if not loop.last else "" }}
+{%- endfor %}
+    },
+    properties = {
+        "LCSC Part": "{{ lcsc }}",
+{%- if footprint_name %}
+        "Footprint": "{{ footprint_name }}",
+{%- endif %}
+{%- if model_3d %}
+        "3D Model": "{{ model_3d }}",
+{%- endif %}
+{%- if easyeda_url %}
+        "EasyEDA": "{{ easyeda_url }}",
+{%- endif %}
+    },
+)

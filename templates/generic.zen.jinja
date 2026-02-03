@@ -1,0 +1,32 @@
+"""
+{{ mpn }} - JLCPCB Basic Part {{ lcsc }}
+{% if description %}
+{{ description }}
+{% endif %}
+Auto-generated using `pcb jlcpcb generate`.
+"""
+
+{{ component_type }} = Module("@stdlib/generics/{{ component_type }}.zen")
+
+{{ component_type }}(
+    name = "{{ name }}",
+    value = "{{ value }}",
+    package = "{{ package }}",
+{%- if tolerance %}
+    tolerance = "{{ tolerance }}",
+{%- endif %}
+{%- if voltage %}
+    voltage = "{{ voltage }}",
+{%- endif %}
+{%- if power %}
+    power = "{{ power }}",
+{%- endif %}
+{%- if dielectric %}
+    dielectric = "{{ dielectric }}",
+{%- endif %}
+    mpn = "{{ mpn }}",
+    manufacturer = "{{ manufacturer }}",
+    properties = {"LCSC Part": "{{ lcsc }}"},
+    P1 = {{ pin1 }},
+    P2 = {{ pin2 }},
+)
