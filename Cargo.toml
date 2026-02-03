@@ -1,6 +1,6 @@
 [package]
 name = "pcb-jlcpcb"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 description = "JLCPCB parts library integration for pcb"
 license = "MIT"
