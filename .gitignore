@@ -4,6 +4,9 @@
 # Claude Code
 .claude/
 
+# Generated components (test output)
+/components/
+
 # Cargo.lock for binaries
 # Uncomment if this is a library
 # Cargo.lock
