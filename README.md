@@ -96,6 +96,87 @@ Commands:
   export  Export BOM in JLCPCB assembly format
 ```
 
+#### `bom check`
+
+Check BOM availability against JLCPCB inventory:
+
+```
+pcb jlcpcb bom check [OPTIONS] <BOM>
+
+Arguments:
+  <BOM>  Path to BOM file (.json or .zen)
+
+Options:
+  -q, --quantity <QUANTITY>  Quantity of boards to build [default: 100]
+      --include-dnp          Include DNP (Do Not Place) components
+  -f, --format <FORMAT>      Output format (human, json) [default: human]
+      --refresh              Bypass the 24-hour part cache
+```
+
+Example:
+
+```bash
+pcb jlcpcb bom check my-board.zen --quantity 50
+```
+
+#### `bom export`
+
+Export BOM in JLCPCB assembly CSV format:
+
+```
+pcb jlcpcb bom export [OPTIONS] <BOM>
+
+Arguments:
+  <BOM>  Path to BOM file (.json or .zen)
+
+Options:
+  -o, --output <OUTPUT>  Output CSV file path [default: jlcpcb_bom.csv]
+      --include-dnp      Include DNP (Do Not Place) components
+  -f, --format <FORMAT>  Output format (human, json) [default: human]
+      --refresh          Bypass the 24-hour part cache
+```
+
+Example:
+
+```bash
+pcb jlcpcb bom export my-board.zen -o assembly_bom.csv
+```
+
+Part lookup results are cached locally for 24 hours (`~/.pcb/jlcpcb/parts/`). Use `--refresh` to bypass the cache and fetch fresh data from the API.
+
+### Utilities
+
+Manage local caches and other housekeeping tasks:
+
+```
+pcb jlcpcb util <COMMAND>
+
+Commands:
+  clean-cache  Clear cached API data
+```
+
+#### `util clean-cache`
+
+Clear locally cached part and pin data:
+
+```
+pcb jlcpcb util clean-cache [OPTIONS]
+
+Options:
+      --parts  Only clear the part lookup cache
+      --pins   Only clear the pin extraction cache
+```
+
+When neither flag is given, both caches are cleared.
+
+Example:
+
+```bash
+pcb jlcpcb util clean-cache          # clear all caches
+pcb jlcpcb util clean-cache --parts  # clear only part cache
+pcb jlcpcb util clean-cache --pins   # clear only pin cache
+```
+
 ## License
 
 MIT

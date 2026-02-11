@@ -6,6 +6,7 @@ use anyhow::{Context, Result};
 use reqwest::blocking::Client;
 use serde::{Deserialize, Deserializer, Serialize};
 
+use super::cache::PartCache;
 use super::types::{JlcPart, PartAttributes, PriceBreak};
 
 /// JLCPCB API endpoint for component search.
@@ -22,6 +23,8 @@ const JLCPCB_SECRET_KEY: &str = "64656661756c744b65794964";
 /// Client for JLCPCB API.
 pub struct JlcpcbClient {
     client: Client,
+    part_cache: PartCache,
+    use_cache: bool,
 }
 
 /// Library type filter for parts search.
@@ -281,7 +284,17 @@ impl JlcpcbClient {
             .build()
             .expect("Failed to create HTTP client");
 
-        Self { client }
+        Self {
+            client,
+            part_cache: PartCache::new(),
+            use_cache: true,
+        }
+    }
+
+    /// Configure whether to use the part cache.
+    pub fn with_cache(mut self, use_cache: bool) -> Self {
+        self.use_cache = use_cache;
+        self
     }
 
     /// Search for parts by keyword (all parts).
@@ -354,10 +367,26 @@ impl JlcpcbClient {
     }
 
     /// Get a single part by LCSC part number.
+    ///
+    /// Results are cached on disk for 24 hours unless caching is disabled.
     pub fn get_part(&self, lcsc: &str) -> Result<Option<JlcPart>> {
+        // Check cache first
+        if self.use_cache {
+            if let Some(cached) = self.part_cache.load(lcsc) {
+                return Ok(Some(cached));
+            }
+        }
+
         // Search by exact LCSC part number
         let parts = self.search(lcsc, 1, 10)?;
-        Ok(parts.into_iter().find(|p| p.lcsc == lcsc))
+        let result = parts.into_iter().find(|p| p.lcsc == lcsc);
+
+        // Cache the result
+        if let Some(ref part) = result {
+            self.part_cache.save(lcsc, part);
+        }
+
+        Ok(result)
     }
 
     /// Get detailed part information including structured attributes.
