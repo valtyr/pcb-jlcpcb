@@ -128,6 +128,30 @@ impl PinCache {
         self.cache_path(lcsc).exists()
     }
 
+    /// Remove all cached pin files.
+    pub fn clear(&self) -> Result<(usize, PathBuf)> {
+        let dir = &self.cache_dir;
+        let mut count = 0;
+
+        if dir.is_dir() {
+            for entry in fs::read_dir(dir)
+                .with_context(|| format!("Failed to read cache directory: {}", dir.display()))?
+            {
+                let entry = entry?;
+                let path = entry.path();
+                if path.extension().and_then(|e| e.to_str()) == Some("json") {
+                    count += 1;
+                }
+            }
+            fs::remove_dir_all(dir)
+                .with_context(|| format!("Failed to remove cache directory: {}", dir.display()))?;
+        }
+
+        fs::create_dir_all(dir)
+            .with_context(|| format!("Failed to recreate cache directory: {}", dir.display()))?;
+        Ok((count, dir.clone()))
+    }
+
     /// Get the cache directory path.
     pub fn cache_dir(&self) -> &PathBuf {
         &self.cache_dir

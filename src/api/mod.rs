@@ -1,5 +1,6 @@
 //! JLCPCB/LCSC API client module.
 
+pub(crate) mod cache;
 mod client;
 mod types;
 
